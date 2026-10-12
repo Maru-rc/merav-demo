@@ -410,7 +410,7 @@ const jsonLd = {
     filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
   }
   .hero-texto { padding-bottom: 72px; max-width: 300px; display: flex; flex-direction: column; gap: 6px; position: relative; z-index: 3; }
-  .hero-texto p { margin: 0; font-size: 15px; line-height: 1.7; color: #e4dccd; }
+  .hero-texto p { margin: 0; font-size: 16px; line-height: 1.7; color: #f1ebdf; }
   .dorado { color: var(--dorado); }
   .hero-foto { position: relative; z-index: 1; }
   .hero-foto img {
@@ -452,7 +452,7 @@ const jsonLd = {
 
   .hero-mini { padding-bottom: 64px; display: flex; align-items: center; justify-content: flex-end; gap: 20px; position: relative; z-index: 3; }
   .mini-linea { width: 24px; height: 1px; background: rgba(201, 164, 106, 0.6); margin-bottom: 30px; flex: none; }
-  .hero-mini a { display: flex; flex-direction: column; align-items: center; gap: 12px; text-decoration: none; color: #e4dccd; font-size: 13px; letter-spacing: 0.1em; }
+  .hero-mini a { display: flex; flex-direction: column; align-items: center; gap: 12px; text-decoration: none; color: #f1ebdf; font-size: 14px; font-weight: 500; letter-spacing: 0.08em; }
   .mini-marco {
     display: block;
     padding: 5px;
@@ -498,7 +498,7 @@ const jsonLd = {
   .historia img { width: 100%; height: auto; aspect-ratio: 4 / 5; max-height: 820px; object-fit: cover; object-position: center top; }
   .historia-texto { padding: 48px clamp(24px, 6vw, 96px); }
   .historia h2 { font-size: 40px; margin-bottom: 20px; }
-  .historia p { margin: 0 0 12px; font-size: 15px; line-height: 1.85; color: var(--gris); max-width: 460px; }
+  .historia p { margin: 0 0 12px; font-size: 17px; line-height: 1.8; color: #3d3b39; max-width: 480px; }
   .pendiente { font-style: italic; }
   .historia .enlace-linea { margin-top: 16px; }
   @media (max-width: 860px) {
@@ -539,7 +539,7 @@ const jsonLd = {
   .taller-rejilla { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
   .taller-texto { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
   .taller-cita { margin: 0; font-family: var(--serif); font-size: clamp(32px, 3.6vw, 48px); line-height: 1.15; font-weight: 400; }
-  .taller-desc { margin: 0; font-size: 15px; line-height: 1.85; color: var(--gris); max-width: 460px; }
+  .taller-desc { margin: 0; font-size: 17px; line-height: 1.8; color: #3d3b39; max-width: 480px; }
   .taller-firma {
     font-family: var(--script); font-size: 44px; line-height: 1;
     background: linear-gradient(100deg, #a98450, #d9bd85 45%, #8f6d3c);
@@ -581,7 +581,7 @@ const jsonLd = {
   .carrusel-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center 38%; filter: grayscale(1) contrast(1.05); transform: scale(1.06); transition: transform 7s ease-out; }
   .carrusel-slide.activa img { transform: scale(1); }
   .para-ti-caja { position: absolute; left: 0; bottom: 0; z-index: 2; padding: 40px; max-width: 340px; display: flex; flex-direction: column; gap: 18px; background: rgba(20, 26, 20, 0.62); backdrop-filter: blur(2px); }
-  .para-ti-caja p { margin: 0; font-size: 14px; line-height: 1.75; }
+  .para-ti-caja p { margin: 0; font-size: 16px; line-height: 1.7; color: #f6f1e7; }
   .para-ti-caja .enlace-linea { align-self: flex-start; }
   .carrusel-controles { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 32px; }
   .carrusel-btn {
@@ -607,7 +607,7 @@ const jsonLd = {
       background: linear-gradient(to top, rgba(20, 26, 20, 0.95) 0%, rgba(20, 26, 20, 0.75) 55%, transparent 100%);
       backdrop-filter: none;
     }
-    .para-ti-caja p { font-size: 14px; }
+    .para-ti-caja p { font-size: 15px; }
     .para-ti-caja .enlace-linea { align-self: center; }
     .carrusel-controles { gap: 12px; margin-top: 26px; }
     .carrusel-btn { width: 42px; height: 42px; font-size: 15px; }
@@ -620,7 +620,7 @@ const jsonLd = {
 
   /* Novias MERAV */
   .novias-cabecera { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 52px; }
-  .novias-titulo { font-family: var(--serif); font-weight: 300; font-size: clamp(34px, 4vw, 52px); letter-spacing: 0.22em; text-transform: uppercase; line-height: 1; }
+  .novias-titulo { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4vw, 52px); letter-spacing: 0.22em; text-transform: uppercase; line-height: 1; }
   .novias-script {
     display: block;
     font-family: var(--script);
@@ -634,13 +634,13 @@ const jsonLd = {
     background-clip: text;
     color: transparent;
   }
-  .novias-cabecera p { margin: 6px 0 0; max-width: 460px; font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--gris); }
+  .novias-cabecera p { margin: 6px 0 0; max-width: 480px; font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 21px; color: #3d3b39; }
   .novias-galeria { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
   .novias-galeria figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
   .novias-galeria .marco { overflow: hidden; }
   .novias-galeria img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform .7s ease; }
   .novias-galeria figure:hover img { transform: scale(1.04); }
-  .novias-galeria figcaption { font-family: var(--serif); font-style: italic; font-size: 17px; text-align: center; color: var(--dorado-texto); }
+  .novias-galeria figcaption { font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 19px; text-align: center; color: var(--dorado-texto); }
   .novias-pie { margin-top: 48px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
   .novias-pie p { margin: 0; font-family: var(--serif); font-size: 20px; }
   .dorado-texto { color: var(--dorado-texto); font-style: italic; }
@@ -660,11 +660,11 @@ const jsonLd = {
     .arco-linea { inset: 26px 4% 0 4%; }
     .halo { top: 30px; }
     .hero-texto { margin-top: -10px; gap: 2px; max-width: 320px; }
-    .hero-texto p { font-size: 14px; line-height: 1.55; }
+    .hero-texto p { font-size: 15px; line-height: 1.55; }
     .hero-texto .enlace-linea { align-self: center; }
     /* productos destacados en una fila compacta */
     .hero-mini { justify-content: center; gap: 22px; padding: 16px 0 0; }
-    .hero-mini a { flex-direction: row; gap: 10px; font-size: 12px; text-align: left; white-space: nowrap; }
+    .hero-mini a { flex-direction: row; gap: 10px; font-size: 13px; text-align: left; white-space: nowrap; }
     .mini-marco { padding: 3px; }
     .mini-marco img { width: 58px; height: 74px; }
     .mini-linea { display: none; }
