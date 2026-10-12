@@ -103,3 +103,12 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; line-height
 .rejilla-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
 @media (max-width: 960px) { .rejilla-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; } }
 .tarjeta .precio-tarjeta { font-size: 16px; font-weight: 500; color: var(--tinta); letter-spacing: 0.02em; }
+
+/* Tarjetas de producto en celular: nombres en una o dos líneas y misma altura */
+.tarjeta .info { flex: 1; justify-content: center; }
+@media (max-width: 600px) {
+  .tarjeta .info { padding: 14px 10px 16px; gap: 4px; }
+  .tarjeta .nombre { font-size: 15px; letter-spacing: 0.06em; line-height: 1.25; }
+  .tarjeta .precio-tarjeta { font-size: 15px; }
+  .tarjeta .accion { font-size: 11px; letter-spacing: 0.1em; }
+}
