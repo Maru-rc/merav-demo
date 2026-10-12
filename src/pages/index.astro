@@ -38,13 +38,14 @@ const valores = [
 
 // Carrusel "Hecho para ti": boda de una clienta MERAV (fotos publicadas en @meravcol)
 const fotosBoda = [
-  { src: R('/img/novia-altar-bn.jpg'), w: 1200, h: 1500, alt: 'Novia con tiara MERAV en el altar' },
-  { src: R('/img/boda-1.jpg'), w: 1200, h: 800, alt: 'Novia con tiara MERAV caminando hacia el altar con el novio' },
-  { src: R('/img/boda-2.jpg'), w: 1200, h: 800, alt: 'Novios sentados frente al altar durante la ceremonia' },
-  { src: R('/img/boda-3.jpg'), w: 1200, h: 800, alt: 'Beso de los novios en la iglesia' },
-  { src: R('/img/boda-4.jpg'), w: 1200, h: 800, alt: 'Los novios tomados de las manos durante los votos' },
-  { src: R('/img/boda-5.jpg'), w: 1200, h: 800, alt: 'Abrazo de los novios en la fiesta' },
-  { src: R('/img/boda-6.jpg'), w: 1200, h: 800, alt: 'Novia con velo y tiara en un carro antiguo' },
+  // pos = punto de enfoque (horizontal vertical) para que la pareja quede centrada al recortar
+  { src: R('/img/novia-altar-bn.jpg'), w: 1200, h: 1500, pos: '50% 30%', alt: 'Novia con tiara MERAV en el altar' },
+  { src: R('/img/boda-1.jpg'), w: 1200, h: 800, pos: '42% 40%', alt: 'Novia con tiara MERAV caminando hacia el altar con el novio' },
+  { src: R('/img/boda-2.jpg'), w: 1200, h: 800, pos: '58% 35%', alt: 'Novios sentados frente al altar durante la ceremonia' },
+  { src: R('/img/boda-3.jpg'), w: 1200, h: 800, pos: '45% 40%', alt: 'Beso de los novios en la iglesia' },
+  { src: R('/img/boda-4.jpg'), w: 1200, h: 800, pos: '52% 40%', alt: 'Los novios tomados de las manos durante los votos' },
+  { src: R('/img/boda-pasillo.jpg'), w: 1200, h: 806, pos: '48% 40%', alt: 'Beso de los novios en el pasillo de la iglesia' },
+  { src: R('/img/boda-6.jpg'), w: 1200, h: 800, pos: '72% 50%', alt: 'Novia con velo y tiara en un carro antiguo' },
 ];
 
 // Fotos de clientas publicadas en @meravcol
@@ -283,7 +284,7 @@ const jsonLd = {
         <div class="carrusel-pista">
           {fotosBoda.map((f, i) => (
             <figure class:list={['carrusel-slide', { activa: i === 0 }]} aria-roledescription="diapositiva" aria-label={`${i + 1} de ${fotosBoda.length}`} aria-hidden={i === 0 ? 'false' : 'true'}>
-              <img src={f.src} alt={f.alt} width={f.w} height={f.h} loading={i === 0 ? 'eager' : 'lazy'} />
+              <img src={f.src} alt={f.alt} width={f.w} height={f.h} style={`object-position:${f.pos}`} loading={i === 0 ? 'eager' : 'lazy'} />
             </figure>
           ))}
         </div>
@@ -603,8 +604,8 @@ const jsonLd = {
     /* el texto va sobre la parte baja de la foto, con degradado, en vez de un bloque aparte */
     .para-ti-caja {
       left: 0; right: 0; bottom: 0; max-width: none;
-      padding: 72px 22px 22px; gap: 12px; text-align: center; align-items: center;
-      background: linear-gradient(to top, rgba(20, 26, 20, 0.95) 0%, rgba(20, 26, 20, 0.75) 55%, transparent 100%);
+      padding: 54px 20px 18px; gap: 10px; text-align: center; align-items: center;
+      background: linear-gradient(to top, rgba(20, 26, 20, 0.94) 0%, rgba(20, 26, 20, 0.7) 50%, transparent 100%);
       backdrop-filter: none;
     }
     .para-ti-caja p { font-size: 15px; }
