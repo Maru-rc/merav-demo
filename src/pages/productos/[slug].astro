@@ -1,0 +1,216 @@
+---
+import Base from '../../layouts/Base.astro';
+import { R } from '../../utils/ruta';
+import Header from '../../components/Header.astro';
+import IconoWhatsApp from '../../components/IconoWhatsApp.astro';
+import { PRODUCTOS, COLORES, IDEAL_PARA, TIEMPO_ELABORACION, ENVIOS, formatoPrecio, waLink } from '../../data/tienda';
+
+export function getStaticPaths() {
+  return PRODUCTOS.map((p) => ({ params: { slug: p.slug }, props: { producto: p } }));
+}
+
+const { producto } = Astro.props;
+const relacionados = PRODUCTOS.filter((p) => p.slug !== producto.slug).slice(0, 4);
+// Por defecto no hay color elegido: la pieza se pide tal como aparece en la foto
+const msjOriginal = `Hola MERAV, me interesa la pieza "${producto.nombre}" tal como aparece en la web.`;
+const msjColor = `Hola MERAV, me interesa la pieza "${producto.nombre}" en color `;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: producto.nombre,
+  description: producto.descripcion,
+  category: producto.categoria,
+  image: producto.imagenes.map((i) => new URL(i.src, Astro.site).toString()),
+  brand: { '@type': 'Brand', name: 'MERAV' },
+  // TODO: añadir "offers" con precio y moneda cuando estén los precios reales
+};
+---
+<Base
+  title={`${producto.nombre} | ${producto.categoria} hechas a mano | MERAV`}
+  description={`${producto.descripcion} Hecha a mano: pídela tal cual o en el color que prefieras por WhatsApp. Envíos a todo el mundo.`}
+  image={producto.imagenes[0].src}
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+  <Header solido />
+
+  <main class="contenedor ficha">
+    <nav class="ruta" aria-label="Ruta">
+      <a href={R('/')}>Inicio</a> / <a href={R('/#colecciones')}>{producto.categoria}</a> / <span>{producto.nombre}</span>
+    </nav>
+
+    <div class="ficha-cuerpo">
+      <div class="galeria">
+        {producto.imagenes.length > 1 && (
+          <div class="miniaturas">
+            {producto.imagenes.map((img, i) => (
+              <button type="button" data-src={img.src} data-alt={img.alt} aria-label={`Ver: ${img.alt}`} aria-pressed={i === 0 ? 'true' : 'false'}>
+                <img src={img.src} alt="" width="76" height="96" />
+              </button>
+            ))}
+          </div>
+        )}
+        <div class="principal">
+          <img id="foto-principal" src={producto.imagenes[0].src} alt={producto.imagenes[0].alt} width="512" height="640" />
+        </div>
+      </div>
+
+      <div class="detalle">
+        <div>
+          <div class="eyebrow">{producto.categoria}{producto.masVendido && ' · Más vendido'}{producto.nuevo && ' · Nuevo'}</div>
+          <h1>{producto.nombre}</h1>
+          <div class="precio">{formatoPrecio(producto.precio)} <span>COP</span></div>
+        </div>
+        <p class="descripcion">{producto.descripcion} {IDEAL_PARA[producto.categoria]}</p>
+
+        <fieldset class="colores">
+          <legend>Color: <span id="color-nombre">Original</span></legend>
+          <div class="colores-lista">
+            <button type="button" data-color="" aria-pressed="true">
+              <span class="punto punto-original" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.6 7.4L22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6z" /></svg></span>Original
+            </button>
+            {COLORES.map((c) => (
+              <button type="button" data-color={c.nombre} aria-pressed="false">
+                <span class="punto" style={`background:${c.hex}`} aria-hidden="true"></span>{c.nombre}
+              </button>
+            ))}
+          </div>
+          <p class="nota">¿Otro tono? Lo personalizamos para ti.</p>
+        </fieldset>
+
+        <a id="pedir" class="boton" href={waLink(msjOriginal)} data-original={msjOriginal} data-base={msjColor} target="_blank" rel="noopener">
+          <IconoWhatsApp size={16} />
+          <span id="pedir-texto">Pedir por WhatsApp</span>
+        </a>
+
+        <div class="acordeon">
+          <details open>
+            <summary>Detalles y medidas <span aria-hidden="true">+</span></summary>
+            <p>{producto.materiales}</p>
+            <p><strong>Medidas aproximadas:</strong> {producto.medidas}</p>
+            <p>Hecha a mano en Colombia. Cada pieza puede tener pequeñas variaciones que la hacen única.</p>
+          </details>
+          <details>
+            <summary>Tiempo de elaboración <span aria-hidden="true">+</span></summary>
+            <p>{TIEMPO_ELABORACION}</p>
+          </details>
+          <details>
+            <summary>Envíos <span aria-hidden="true">+</span></summary>
+            {ENVIOS.map((e) => <p>{e}</p>)}
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <section class="relacionados" aria-labelledby="combina">
+      <h2 id="combina" class="titulo-seccion">Combínala con</h2>
+      <div class="rejilla-4">
+        {relacionados.map((r) => (
+          <a class="tarjeta" href={R(`/productos/${r.slug}`)}>
+            <div class="marco"><img src={r.imagenes[0].src} alt={r.imagenes[0].alt} width="480" height="600" loading="lazy" /></div>
+            <span class="info"><span class="nombre">{r.nombre}</span><span class="precio-tarjeta">{formatoPrecio(r.precio)}</span><span class="accion">Ver pieza →</span></span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script>
+  import { waLink } from '../../data/tienda';
+
+  // Selector de color: "Original" (como en la foto) viene elegido por defecto
+  const pedir = document.getElementById('pedir') as HTMLAnchorElement | null;
+  const nombre = document.getElementById('color-nombre');
+  const pedirTexto = document.getElementById('pedir-texto');
+  const botonesColor = [...document.querySelectorAll<HTMLButtonElement>('.colores-lista button')];
+  botonesColor.forEach((b) => {
+    b.addEventListener('click', () => {
+      botonesColor.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      if (!pedir) return;
+      const color = b.dataset.color;
+      if (!color) {
+        if (nombre) nombre.textContent = 'Original';
+        if (pedirTexto) pedirTexto.textContent = 'Pedir por WhatsApp';
+        pedir.href = waLink(pedir.dataset.original!);
+      } else {
+        if (nombre) nombre.textContent = color;
+        if (pedirTexto) pedirTexto.textContent = `Pedir en ${color} por WhatsApp`;
+        pedir.href = waLink(pedir.dataset.base + color + '.');
+      }
+    });
+  });
+
+  const foto = document.getElementById('foto-principal') as HTMLImageElement | null;
+  document.querySelectorAll<HTMLButtonElement>('.miniaturas button').forEach((b, _, todos) => {
+    b.addEventListener('click', () => {
+      if (foto) { foto.src = b.dataset.src!; foto.alt = b.dataset.alt!; }
+      todos.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    });
+  });
+</script>
+
+<style>
+  /* Ficha: texto más grande, más grueso y con más contraste para que se lea fácil */
+  .ficha { padding-top: 28px; padding-bottom: 112px; font-weight: 400; }
+  .ruta { font-size: 14px; letter-spacing: 0.04em; color: #4a4846; margin-bottom: 32px; }
+  .ruta a { color: #4a4846; }
+  .ruta span { color: var(--tinta); }
+  .ficha .eyebrow { font-size: 13px; font-weight: 500; color: #5c4826; }
+
+  .ficha-cuerpo { display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: start; }
+  @media (max-width: 900px) { .ficha-cuerpo { grid-template-columns: 1fr; gap: 32px; } }
+
+  .galeria { display: flex; gap: 14px; }
+  .miniaturas { display: flex; flex-direction: column; gap: 12px; }
+  .miniaturas button { width: 76px; height: 96px; padding: 0; background: none; border: 1px solid transparent; cursor: pointer; opacity: 0.7; }
+  .miniaturas button[aria-pressed='true'] { border-color: var(--tinta); opacity: 1; }
+  .miniaturas img { width: 100%; height: 100%; object-fit: cover; }
+  .principal { flex: 1; min-width: 0; background: var(--hueso); }
+  .principal img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  @media (max-width: 600px) {
+    .galeria { flex-direction: column-reverse; }
+    .miniaturas { flex-direction: row; overflow-x: auto; }
+    .miniaturas button { flex: none; width: 64px; height: 80px; }
+  }
+
+  .detalle { display: flex; flex-direction: column; gap: 24px; }
+  .detalle h1 { font-size: clamp(40px, 4.4vw, 52px); margin-top: 10px; line-height: 1.05; }
+  .precio { margin-top: 12px; font-size: 26px; font-weight: 500; }
+  .precio span { font-size: 15px; font-weight: 400; color: #4a4846; }
+  .descripcion { margin: 0; font-size: 17px; line-height: 1.75; color: #3d3b39; }
+
+  .colores { border: 0; margin: 0; padding: 0; }
+  .colores legend { padding: 0; font-size: 14px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; color: var(--tinta); }
+  .colores legend span { color: #5c4826; }
+  .colores-lista { display: flex; flex-wrap: wrap; gap: 10px; }
+  .colores-lista button {
+    display: flex; align-items: center; gap: 10px; min-height: 44px;
+    padding: 8px 18px 8px 10px; background: var(--marfil);
+    border: 1px solid #c9c2b5; border-radius: 999px; cursor: pointer;
+    font-family: inherit; font-size: 15px; font-weight: 400; color: var(--tinta);
+    transition: border-color .2s;
+  }
+  .colores-lista button:hover { border-color: #8a8478; }
+  .colores-lista button[aria-pressed='true'] { border: 2px solid var(--tinta); font-weight: 500; }
+  .punto { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #b9b2a5; }
+  /* "Original": círculo marfil con un destello dorado (sin foto) */
+  .punto-original { display: flex; align-items: center; justify-content: center; background: var(--marfil); border-color: var(--dorado); color: #a98450; }
+  .nota { font-size: 15px; color: #4a4846; margin: 12px 0 0; }
+
+  .ficha .boton { font-size: 14px; font-weight: 500; padding: 20px 28px; }
+  .ficha .boton :global(svg) { color: var(--dorado); }
+
+  .acordeon { border-top: 1px solid #d9d3c7; }
+  .acordeon details { border-bottom: 1px solid #d9d3c7; padding: 14px 0; }
+  .acordeon summary {
+    display: flex; justify-content: space-between; align-items: center; min-height: 48px;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--tinta); cursor: pointer; list-style: none;
+  }
+  .acordeon summary span { font-size: 20px; color: #5c4826; }
+  .acordeon summary::-webkit-details-marker { display: none; }
+  .acordeon p { margin: 6px 0 4px; font-size: 16px; line-height: 1.7; color: #3d3b39; }
+
+  .relacionados { margin-top: 112px; }
+  .relacionados h2 { margin-bottom: 36px; }
+</style>

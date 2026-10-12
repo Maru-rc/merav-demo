@@ -1,0 +1,615 @@
+---
+import Base from '../layouts/Base.astro';
+import { R } from '../utils/ruta';
+import Header from '../components/Header.astro';
+import { PRODUCTOS, COLECCIONES, INSTAGRAM, formatoPrecio, waLink } from '../data/tienda';
+
+const pestanas = [
+  { id: 'best', label: 'Más vendidos' },
+  { id: 'nuevo', label: 'Novedades' },
+  { id: 'tiaras', label: 'Tiaras' },
+  { id: 'tocados', label: 'Tocados' },
+  { id: 'accesorios', label: 'Accesorios' },
+];
+
+const grupos = (p: (typeof PRODUCTOS)[number]) =>
+  [p.masVendido && 'best', p.nuevo && 'nuevo', p.categoria === 'Tiaras' && 'tiaras', p.categoria === 'Tocados' && 'tocados', p.categoria === 'Accesorios' && 'accesorios']
+    .filter(Boolean)
+    .join(' ');
+
+const valores = [
+  { titulo: 'Hecho a mano', texto: 'Cada pieza se arma una a una en nuestro taller en Colombia, con atención a cada perla y cada flor.' },
+  { titulo: 'Color a tu medida', texto: 'Dorado, plata, champán u oro rosa: personalizamos tu pieza para que combine con tu vestido.' },
+  { titulo: 'Envíos a todo el mundo', texto: 'Tu pieza llega en su caja MERAV, a donde sea que celebres tu día.' },
+];
+
+// Carrusel "Hecho para ti": boda de una clienta MERAV (fotos publicadas en @meravcol)
+const fotosBoda = [
+  { src: R('/img/novia-altar-bn.jpg'), w: 1200, h: 1500, alt: 'Novia con tiara MERAV en el altar' },
+  { src: R('/img/boda-1.jpg'), w: 1200, h: 800, alt: 'Novia con tiara MERAV caminando hacia el altar con el novio' },
+  { src: R('/img/boda-2.jpg'), w: 1200, h: 800, alt: 'Novios sentados frente al altar durante la ceremonia' },
+  { src: R('/img/boda-3.jpg'), w: 1200, h: 800, alt: 'Beso de los novios en la iglesia' },
+  { src: R('/img/boda-4.jpg'), w: 1200, h: 800, alt: 'Los novios tomados de las manos durante los votos' },
+  { src: R('/img/boda-5.jpg'), w: 1200, h: 800, alt: 'Abrazo de los novios en la fiesta' },
+  { src: R('/img/boda-6.jpg'), w: 1200, h: 800, alt: 'Novia con velo y tiara en un carro antiguo' },
+];
+
+// Fotos de clientas publicadas en @meravcol
+const novias = [
+  { src: R('/img/novia-ventana.jpg'), w: 1200, h: 1500, alt: 'Novia MERAV con tocado junto a la ventana', texto: 'Luz de mañana' },
+  { src: R('/img/novia-pareja-jardin.jpg'), w: 1079, h: 1337, alt: 'Novia MERAV con tiara junto a su esposo en un jardín', texto: 'Para siempre' },
+  { src: R('/img/boda-nueva-york.jpg'), w: 1170, h: 1454, alt: 'Pareja de novios celebrando en una terraza de Nueva York', texto: 'Nueva York' },
+  { src: R('/img/novia-ramo.jpg'), w: 1065, h: 1332, alt: 'Novia MERAV sonriente con tiara y ramo de flores', texto: 'Sonrisa de novia' },
+  { src: R('/img/novia-salon.jpg'), w: 1200, h: 1500, alt: 'Novia MERAV con tiara y vestido de encaje', texto: 'Encaje y perlas' },
+  { src: R('/img/tiara-flor-de-perla.jpg'), w: 1063, h: 1329, alt: 'Novia recibiendo su tiara MERAV de flores y perlas', texto: 'El último detalle' },
+  { src: R('/img/novios-tiara.jpg'), w: 1116, h: 1391, alt: 'Ceremonia de boda frente al skyline de Nueva York', texto: 'El sí, acepto' },
+  { src: R('/img/novia-tiara.jpg'), w: 1059, h: 1323, alt: 'Novia MERAV con tiara de cristales', texto: 'Brillo propio' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Store',
+  name: 'MERAV — Tocados y Diademas',
+  description: 'Tiaras, diademas y tocados para novia hechos a mano en Colombia. Personaliza el color. Envíos a todo el mundo.',
+  url: Astro.site?.toString(),
+  image: new URL(R('/img/novia-tiara.jpg'), Astro.site).toString(),
+  telephone: '+57 333 039 9107',
+  address: { '@type': 'PostalAddress', addressCountry: 'CO' },
+  sameAs: [INSTAGRAM],
+};
+---
+<Base
+  title="MERAV | Tiaras, diademas y tocados para novia hechos a mano en Colombia"
+  description="Tiaras, diademas y tocados nupciales hechos a mano en Colombia. Personaliza el color de tu pieza y recíbela en cualquier parte del mundo."
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- ===== PORTADA ===== -->
+  <Header />
+  <section class="hero" id="inicio">
+    <svg class="hero-ornamento" viewBox="0 0 1440 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="oro" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#e7cf9f" />
+          <stop offset="0.5" stop-color="#c9a46a" />
+          <stop offset="1" stop-color="#8f6d3c" />
+        </linearGradient>
+      </defs>
+      <g fill="none" stroke="url(#oro)" stroke-linecap="round">
+        <!-- Volutas izquierda -->
+        <path d="M-20 560 C 140 520 250 430 330 330 C 400 245 470 205 560 214"  pathLength="1" class="trazo" stroke-width="1.4" opacity="0.75" />
+        <path d="M60 640 C 210 600 320 520 400 420 C 450 360 500 330 548 330 C 590 330 600 370 572 392 C 548 410 518 396 524 372"  pathLength="1" class="trazo" stroke-width="1" opacity="0.5" />
+        <!-- Voluta derecha, en espiral -->
+        <path d="M1470 300 C 1330 250 1220 300 1150 238 C 1090 186 1110 104 1180 98 C 1250 92 1270 170 1214 196 C 1176 214 1146 188 1160 162"  pathLength="1" class="trazo" stroke-width="1.5" opacity="0.8" />
+        <path d="M1460 470 C 1320 470 1210 420 1130 350 C 1060 290 980 280 900 300"  pathLength="1" class="trazo" stroke-width="1" opacity="0.45" />
+        <!-- Órbita alrededor del arco -->
+        <ellipse class="orbita" cx="720" cy="470" rx="330" ry="330" stroke-width="0.8" opacity="0.28" stroke-dasharray="2 7" />
+      </g>
+      <!-- Destellos -->
+      <g class="destellos" fill="#e7cf9f">
+        <path d="M600 300 l4 14 14 4 -14 4 -4 14 -4 -14 -14 -4 14 -4z" opacity="0.9" />
+        <path d="M884 236 l3 10 10 3 -10 3 -3 10 -3 -10 -10 -3 10 -3z" opacity="0.8" />
+        <path d="M1010 520 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z" opacity="0.6" />
+        <path d="M420 470 l2 7 7 2 -7 2 -2 7 -2 -7 -7 -2 7 -2z" opacity="0.6" />
+        <path d="M1240 420 l2 7 7 2 -7 2 -2 7 -2 -7 -7 -2 7 -2z" opacity="0.55" />
+      </g>
+    </svg>
+
+    <div class="hero-cuerpo">
+      <h1 class="hero-titulo">
+        <span class="script" aria-hidden="true">Hecho a mano</span>
+        <span class="sr-only">MERAV: tiaras, diademas y tocados para novia hechos a mano en Colombia</span>
+      </h1>
+
+      <div class="hero-texto">
+        <p>Tiaras, diademas y tocados hechos a mano en Colombia. Te acompañamos para crear la pieza de tus sueños, en el color que imaginas.</p>
+        <a class="enlace-linea dorado" href={waLink('Hola MERAV, quiero personalizar una pieza')}>Personaliza tu pieza <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="hero-foto">
+        <span class="arco-linea" aria-hidden="true"></span>
+        <span class="halo" aria-hidden="true"></span>
+        <img src={R('/img/hero-zafiro-v2.webp')} alt="Modelo con diadema MERAV de perlas y cristales azul zafiro" width="1100" height="1500" fetchpriority="high" />
+      </div>
+
+      <div class="hero-mini">
+        <span class="mini-linea" aria-hidden="true"></span>
+        <a href={R('/productos/tiara-perla-real')}>
+          <span class="mini-marco"><img src={R('/img/tiara-perla-real.webp')} alt="" width="96" height="120" loading="lazy" /></span>
+          <span>Tiara Perla Real</span>
+        </a>
+        <a href={R('/productos/diadema-rubi')}>
+          <span class="mini-marco"><img src={R('/img/diadema-rubi.jpg')} alt="" width="96" height="120" loading="lazy" /></span>
+          <span>Diadema Rubí</span>
+        </a>
+        <span class="mini-linea" aria-hidden="true"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ENCUENTRA TU PIEZA ===== -->
+  <section class="contenedor seccion" id="tienda">
+    <h2 class="titulo-seccion">Encuentra tu pieza perfecta</h2>
+    <div class="pestanas" role="tablist" aria-label="Filtrar piezas">
+      {pestanas.map((t, i) => (
+        <button type="button" role="tab" data-tab={t.id} aria-selected={i === 0 ? 'true' : 'false'}>{t.label}</button>
+      ))}
+    </div>
+    <div class="rejilla-4" id="productos">
+      {PRODUCTOS.map((p) => (
+        <a class="tarjeta" href={R(`/productos/${p.slug}`)} data-grupos={grupos(p)}>
+          <div class="marco"><img src={p.imagenes[0].src} alt={p.imagenes[0].alt} width="480" height="600" loading="lazy" /></div>
+          <span class="info">
+            <span class="nombre">{p.nombre}</span>
+            <span class="precio-tarjeta">{formatoPrecio(p.precio)}</span>
+            <span class="accion">Ver pieza →</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ===== HISTORIA ===== -->
+  <section class="historia" id="historia">
+    <img src={R('/img/tocado-cristal.webp')} alt="Detalle de tocado de cristales MERAV en el cabello" width="1440" height="1800" loading="lazy" />
+    <div class="historia-texto">
+      <h2>Perlas que cuentan tu historia</h2>
+      <p>Cada pieza MERAV nace a mano, perla por perla y flor por flor. No es solo un accesorio: es el detalle que te acompaña en el día que vas a recordar siempre.</p>
+      <p>MERAV nació del amor por los pequeños detalles que hacen inolvidable un día. Diseñamos y elaboramos cada pieza en Colombia, combinando técnicas artesanales con materiales seleccionados, para que cada novia encuentre la suya.</p>
+      <a class="enlace-linea" href="#novias">Conoce MERAV <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- ===== COLECCIONES ===== -->
+  <section class="contenedor seccion" id="colecciones">
+    <h2 class="titulo-seccion" style="margin-bottom: 48px">Colecciones</h2>
+    <div class="rejilla-4">
+      {COLECCIONES.map((c) => (
+        <a class="coleccion" href="#tienda">
+          <div class="marco"><img src={c.img} alt={`Colección ${c.nombre}`} width="480" height="600" loading="lazy" /></div>
+          <span>{c.nombre} <span aria-hidden="true">→</span></span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ===== VALORES ===== -->
+  <section class="valores" aria-label="Por qué MERAV">
+    <div class="contenedor valores-rejilla">
+      {valores.map((v) => (
+        <div>
+          <h3>{v.titulo}</h3>
+          <p>{v.texto}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ===== TALLER ===== -->
+  <section class="taller">
+    <div class="contenedor taller-rejilla">
+      <div class="taller-texto">
+        <span class="eyebrow">Taller MERAV</span>
+        <p class="taller-cita">En nuestro taller cada detalle empieza con intención.</p>
+        <p class="taller-desc">Unimos perlas, cristales y flores, una a una, en piezas únicas que acompañan tu día con delicadeza. Nada sale de serie: cada tiara, diadema y tocado se arma a mano para la mujer que la va a llevar.</p>
+        <span class="taller-firma" aria-hidden="true">con amor, Merav</span>
+        <a class="enlace-linea" href="#historia">Sobre nosotras →</a>
+      </div>
+      <div class="taller-fotos">
+        <span class="taller-marco" aria-hidden="true"></span>
+        <img class="taller-foto-a" src={R('/img/tocado-rocio.jpg')} alt="Tocado plateado de cristales en su caja MERAV" width="1200" height="1500" loading="lazy" />
+        <img class="taller-foto-b" src={R('/img/aretes-hojas.jpg')} alt="Aretes de hojas de cristal sobre caja MERAV" width="1200" height="1500" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HECHO PARA TI (carrusel) ===== -->
+  <section class="para-ti" id="hecho-para-ti">
+    <svg class="para-ti-ornamento izq" viewBox="0 0 220 700" aria-hidden="true">
+      <g fill="none" stroke="#c9a46a" stroke-linecap="round">
+        <path d="M200 20 C 60 120 40 260 120 340 C 190 410 150 500 70 520 C 20 532 0 500 18 470 C 34 444 70 452 74 480" stroke-width="1.2" opacity="0.7" />
+        <path d="M170 60 C 70 160 70 280 140 360 C 200 430 170 560 90 640" stroke-width="0.8" opacity="0.35" />
+        <path d="M120 340 C 80 330 50 300 46 262 C 42 230 66 214 86 228" stroke-width="0.9" opacity="0.5" />
+      </g>
+      <g fill="#e7cf9f">
+        <path d="M150 200 l3 10 10 3 -10 3 -3 10 -3 -10 -10 -3 10 -3z" opacity="0.8" />
+        <path d="M60 600 l2 7 7 2 -7 2 -2 7 -2 -7 -7 -2 7 -2z" opacity="0.6" />
+      </g>
+    </svg>
+    <svg class="para-ti-ornamento der" viewBox="0 0 220 700" aria-hidden="true">
+      <g fill="none" stroke="#c9a46a" stroke-linecap="round">
+        <path d="M200 20 C 60 120 40 260 120 340 C 190 410 150 500 70 520 C 20 532 0 500 18 470 C 34 444 70 452 74 480" stroke-width="1.2" opacity="0.7" />
+        <path d="M170 60 C 70 160 70 280 140 360 C 200 430 170 560 90 640" stroke-width="0.8" opacity="0.35" />
+        <path d="M120 340 C 80 330 50 300 46 262 C 42 230 66 214 86 228" stroke-width="0.9" opacity="0.5" />
+      </g>
+      <g fill="#e7cf9f">
+        <path d="M150 200 l3 10 10 3 -10 3 -3 10 -3 -10 -10 -3 10 -3z" opacity="0.8" />
+        <path d="M60 600 l2 7 7 2 -7 2 -2 7 -2 -7 -7 -2 7 -2z" opacity="0.6" />
+      </g>
+    </svg>
+
+    <div class="contenedor para-ti-cuerpo">
+      <header class="para-ti-cabecera">
+        <span class="eyebrow">Hecho para ti</span>
+        <h2>Cada pieza que creamos es hecha a mano, <em>especialmente para ti</em></h2>
+      </header>
+
+      <div class="carrusel" aria-roledescription="carrusel" aria-label="Bodas con piezas MERAV">
+        <div class="carrusel-escena">
+        <span class="carrusel-marco" aria-hidden="true"></span>
+        <div class="carrusel-pista">
+          {fotosBoda.map((f, i) => (
+            <figure class:list={['carrusel-slide', { activa: i === 0 }]} aria-roledescription="diapositiva" aria-label={`${i + 1} de ${fotosBoda.length}`} aria-hidden={i === 0 ? 'false' : 'true'}>
+              <img src={f.src} alt={f.alt} width={f.w} height={f.h} loading={i === 0 ? 'eager' : 'lazy'} />
+            </figure>
+          ))}
+        </div>
+        <div class="para-ti-caja">
+          <p>Te ayudamos a encontrar la pieza ideal para tu peinado, tu vestido y tu fecha: tu boda, tus quince o una ocasión especial.</p>
+          <a class="enlace-linea" href={waLink('Hola MERAV, quiero asesoría para elegir mi pieza')}>Escríbenos →</a>
+        </div>
+        </div>
+        <div class="carrusel-controles">
+          <button type="button" class="carrusel-btn" data-dir="-1" aria-label="Foto anterior">←</button>
+          <div class="carrusel-puntos">
+            {fotosBoda.map((_, i) => (
+              <button type="button" data-ir={i} aria-label={`Ir a la foto ${i + 1}`} aria-current={i === 0 ? 'true' : 'false'}></button>
+            ))}
+          </div>
+          <button type="button" class="carrusel-btn" data-dir="1" aria-label="Foto siguiente">→</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NOVIAS MERAV (clientas reales) ===== -->
+  <section class="contenedor seccion" id="novias">
+    <header class="novias-cabecera">
+      <h2 class="novias-titulo"><span class="novias-script">Novias</span> MERAV</h2>
+      <p>Mujeres que eligieron una pieza hecha a mano para el día más especial de su vida.</p>
+    </header>
+    <ul class="novias-galeria">
+      {novias.map((n) => (
+        <li>
+          <figure>
+            <div class="marco"><img src={n.src} alt={n.alt} width={n.w} height={n.h} loading="lazy" /></div>
+            <figcaption>{n.texto}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+    <div class="novias-pie">
+      <p>Cada novia tiene su historia; nosotras tenemos el honor de <span class="dorado-texto">coronarla</span>.</p>
+      <a class="enlace-linea" href={INSTAGRAM}>Ver más en Instagram →</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const botones = document.querySelectorAll<HTMLButtonElement>('.pestanas [role="tab"]');
+  const tarjetas = document.querySelectorAll<HTMLElement>('#productos .tarjeta');
+  const mostrar = (id: string) => {
+    let n = 0;
+    tarjetas.forEach((t) => {
+      const ok = (t.dataset.grupos ?? '').split(' ').includes(id) && n < 4;
+      t.hidden = !ok;
+      if (ok) n++;
+    });
+    botones.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+  };
+  botones.forEach((b) => b.addEventListener('click', () => mostrar(b.dataset.tab!)));
+  mostrar('best');
+
+  // Carrusel "Hecho para ti": cambia sola cada 5 s, se pausa al pasar el mouse
+  const carrusel = document.querySelector<HTMLElement>('.carrusel');
+  if (carrusel) {
+    const slides = [...carrusel.querySelectorAll<HTMLElement>('.carrusel-slide')];
+    const puntos = [...carrusel.querySelectorAll<HTMLButtonElement>('.carrusel-puntos button')];
+    let actual = 0;
+    let timer: number | undefined;
+    const ir = (n: number) => {
+      actual = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => {
+        s.classList.toggle('activa', i === actual);
+        s.setAttribute('aria-hidden', String(i !== actual));
+      });
+      puntos.forEach((p, i) => p.setAttribute('aria-current', String(i === actual)));
+    };
+    const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const iniciar = () => { if (!reducido) { clearInterval(timer); timer = window.setInterval(() => ir(actual + 1), 5000); } };
+    const parar = () => clearInterval(timer);
+    carrusel.querySelectorAll<HTMLButtonElement>('.carrusel-btn').forEach((b) =>
+      b.addEventListener('click', () => { ir(actual + Number(b.dataset.dir)); iniciar(); })
+    );
+    puntos.forEach((p) => p.addEventListener('click', () => { ir(Number(p.dataset.ir)); iniciar(); }));
+    carrusel.addEventListener('mouseenter', parar);
+    carrusel.addEventListener('mouseleave', iniciar);
+    carrusel.addEventListener('focusin', parar);
+    iniciar();
+  }
+</script>
+
+<style>
+  /* Portada */
+  .hero {
+    /* El fondo verde sube por detrás de la barra de navegación (que es sticky y transparente arriba) */
+    margin-top: calc(-1 * var(--alto-cabecera));
+    padding-top: var(--alto-cabecera);
+    position: relative;
+    color: var(--crema);
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 46% 60% at 50% 62%, rgba(201, 164, 106, 0.16), transparent 70%),
+      radial-gradient(ellipse 80% 90% at 50% 40%, #34463a 0%, var(--verde) 55%, #1f2a20 100%);
+  }
+  .hero-ornamento { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .hero-cuerpo {
+    position: relative;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: calc(clamp(72px, 11vw, 168px) * 0.77) 24px 0;
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 500px) 1fr;
+    align-items: end;
+    gap: 32px;
+  }
+  /* El titular va detrás de la modelo: la cabeza y la diadema lo cruzan, como en una portada de revista */
+  .hero-titulo { position: absolute; inset: 0 0 auto 0; top: -14px; z-index: 0; text-align: center; pointer-events: none; }
+  .script {
+    font-family: var(--script);
+    font-size: clamp(72px, 11vw, 168px);
+    line-height: 1;
+    font-weight: 400;
+    background: linear-gradient(100deg, #b8915a 0%, #ecd6a8 38%, #c9a46a 60%, #e7cf9f 82%, #a98450 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+  }
+  .hero-texto { padding-bottom: 72px; max-width: 300px; display: flex; flex-direction: column; gap: 6px; position: relative; z-index: 3; }
+  .hero-texto p { margin: 0; font-size: 15px; line-height: 1.7; color: #e4dccd; }
+  .dorado { color: var(--dorado); }
+  .hero-foto { position: relative; z-index: 1; }
+  .hero-foto img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 660px;
+    object-fit: contain;
+    object-position: center bottom;
+    /* La parte de abajo se funde con el fondo (el hombro izquierdo ya viene desvanecido en la imagen) */
+    -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 97%);
+    mask-image: linear-gradient(to bottom, #000 62%, transparent 97%);
+  }
+  /* Brillo cálido detrás de la modelo */
+  .halo {
+    position: absolute;
+    left: 8%; right: 8%; top: 70px; bottom: 0;
+    border-radius: 999px 999px 0 0;
+    background: radial-gradient(ellipse 60% 55% at 50% 40%, rgba(231, 207, 159, 0.22), rgba(201, 164, 106, 0.06) 60%, transparent 75%);
+  }
+  /* Doble arco dorado detrás de la modelo */
+  .arco-linea {
+    position: absolute;
+    inset: 60px 4% 0 4%;
+    border: 1px solid rgba(201, 164, 106, 0.55);
+    border-bottom: 0;
+    border-radius: 256px 256px 0 0;
+    -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 95%);
+    mask-image: linear-gradient(to bottom, #000 60%, transparent 95%);
+  }
+  .arco-linea::after {
+    content: '';
+    position: absolute;
+    inset: -12px -12px 0 -12px;
+    border: 1px solid rgba(201, 164, 106, 0.22);
+    border-bottom: 0;
+    border-radius: 268px 268px 0 0;
+  }
+
+  .hero-mini { padding-bottom: 64px; display: flex; align-items: center; justify-content: flex-end; gap: 20px; position: relative; z-index: 3; }
+  .mini-linea { width: 24px; height: 1px; background: rgba(201, 164, 106, 0.6); margin-bottom: 30px; flex: none; }
+  .hero-mini a { display: flex; flex-direction: column; align-items: center; gap: 12px; text-decoration: none; color: #e4dccd; font-size: 13px; letter-spacing: 0.1em; }
+  .mini-marco {
+    display: block;
+    padding: 5px;
+    border: 1px solid rgba(201, 164, 106, 0.7);
+    border-radius: 999px;
+    transition: transform .3s, border-color .3s;
+  }
+  .mini-marco img { width: 148px; height: 196px; object-fit: cover; border-radius: 999px; }
+  @media (max-width: 1280px) {
+    .mini-marco img { width: 120px; height: 160px; }
+    .mini-linea { display: none; }
+  }
+  @media (max-width: 1180px) {
+    .hero-mini { gap: 12px; }
+    .mini-marco img { width: 100px; height: 136px; }
+  }
+  .hero-mini a:hover .mini-marco { transform: translateY(-4px); border-color: var(--dorado); }
+
+  @media (max-width: 960px) {
+    .hero-cuerpo { grid-template-columns: 1fr; padding-top: 24px; gap: 28px; justify-items: center; text-align: center; }
+    .hero-titulo { position: relative; top: 0; order: 0; }
+    .hero-foto { order: 1; width: min(100%, 420px); }
+    .hero-foto img { height: 480px; }
+    .mini-marco img { width: 120px; height: 160px; }
+    .hero-texto { order: 2; padding-bottom: 0; align-items: center; }
+    .hero-mini { order: 3; justify-content: center; padding-bottom: 48px; }
+  }
+
+  .seccion { padding-top: 104px; padding-bottom: 112px; }
+
+  /* Pestañas */
+  .pestanas { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; margin: 18px 0 48px; }
+  .pestanas button {
+    background: none; border: 0; border-bottom: 1px solid transparent;
+    padding: 10px 2px; min-height: 44px;
+    font-family: inherit; font-size: 15px; letter-spacing: 0.06em; color: #4a4846; cursor: pointer;
+  }
+  .pestanas button[aria-selected='true'] { color: var(--tinta); font-weight: 500; border-bottom-color: var(--tinta); }
+  .tarjeta[hidden] { display: none; }
+
+  /* Historia */
+  .historia { display: grid; grid-template-columns: 5fr 6fr; align-items: center; max-width: 1320px; margin: 0 auto; }
+  .historia img { width: 100%; height: auto; aspect-ratio: 4 / 5; max-height: 820px; object-fit: cover; object-position: center top; }
+  .historia-texto { padding: 48px clamp(24px, 6vw, 96px); }
+  .historia h2 { font-size: 40px; margin-bottom: 20px; }
+  .historia p { margin: 0 0 12px; font-size: 15px; line-height: 1.85; color: var(--gris); max-width: 460px; }
+  .pendiente { font-style: italic; }
+  .historia .enlace-linea { margin-top: 16px; }
+  @media (max-width: 860px) {
+    .historia { grid-template-columns: 1fr; }
+    .historia img { max-height: 560px; }
+  }
+
+  /* Colecciones */
+  .coleccion { display: flex; flex-direction: column; gap: 14px; text-decoration: none; }
+  .coleccion .marco { overflow: hidden; }
+  .coleccion img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform .6s; }
+  .coleccion:hover img { transform: scale(1.04); }
+  .coleccion > span { font-family: var(--serif); font-size: 18px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #5c4826; }
+
+  /* Valores */
+  .valores { background: var(--hueso); }
+  .valores-rejilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; padding-top: 72px; padding-bottom: 72px; text-align: center; }
+  .valores h3 { font-size: 22px; font-weight: 500; margin-bottom: 12px; }
+  .valores p { margin: 0 auto; font-size: 14px; line-height: 1.75; color: var(--gris); max-width: 300px; }
+  @media (max-width: 760px) { .valores-rejilla { grid-template-columns: 1fr; gap: 32px; } }
+
+  /* Taller */
+  .taller { background: var(--marfil); padding: 120px 0; overflow: hidden; }
+  .taller-rejilla { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+  .taller-texto { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+  .taller-cita { margin: 0; font-family: var(--serif); font-size: clamp(32px, 3.6vw, 48px); line-height: 1.15; font-weight: 400; }
+  .taller-desc { margin: 0; font-size: 15px; line-height: 1.85; color: var(--gris); max-width: 460px; }
+  .taller-firma {
+    font-family: var(--script); font-size: 44px; line-height: 1;
+    background: linear-gradient(100deg, #a98450, #d9bd85 45%, #8f6d3c);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .taller-fotos { position: relative; height: 600px; }
+  .taller-fotos img { position: absolute; object-fit: cover; box-shadow: 0 24px 50px rgba(28, 28, 26, 0.18); }
+  .taller-foto-a { left: 0; top: 0; width: 62%; height: 82%; }
+  .taller-foto-b { right: 0; bottom: 0; width: 48%; height: 58%; border: 10px solid var(--marfil); }
+  .taller-marco { position: absolute; left: 6%; top: 6%; width: 62%; height: 82%; border: 1px solid var(--dorado); transform: translate(18px, 18px); }
+  @media (max-width: 860px) {
+    .taller { padding: 80px 0; }
+    .taller-rejilla { grid-template-columns: 1fr; gap: 48px; }
+    .taller-fotos { height: 460px; }
+  }
+
+  /* Hecho para ti + carrusel */
+  .para-ti { position: relative; background: var(--verde-oscuro); color: var(--crema); padding: 104px 0 96px; overflow: hidden; }
+  .para-ti-ornamento { position: absolute; top: 50%; width: 220px; height: 700px; transform: translateY(-50%); pointer-events: none; }
+  .para-ti-ornamento.izq { left: max(0px, calc(50% - 790px)); }
+  .para-ti-ornamento.der { right: max(0px, calc(50% - 790px)); transform: translateY(-50%) scaleX(-1); }
+  .para-ti-cuerpo { position: relative; }
+  .para-ti-cabecera { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 48px; }
+  .para-ti-cabecera .eyebrow { color: var(--dorado); }
+  .para-ti h2 { font-size: clamp(28px, 3.2vw, 42px); max-width: 720px; }
+  .para-ti h2 em { font-family: var(--script); font-style: normal; font-size: 1.45em; color: var(--dorado); line-height: 1; }
+
+  .carrusel { position: relative; }
+  .carrusel-escena { position: relative; }
+  .carrusel-marco { position: absolute; inset: -14px; border: 1px solid rgba(201, 164, 106, 0.45); pointer-events: none; }
+  .carrusel-marco::before, .carrusel-marco::after {
+    content: ''; position: absolute; width: 10px; height: 10px; background: var(--dorado); transform: rotate(45deg);
+  }
+  .carrusel-marco::before { top: -5px; left: calc(50% - 5px); }
+  .carrusel-marco::after { bottom: -5px; left: calc(50% - 5px); }
+  .carrusel-pista { position: relative; height: 640px; overflow: hidden; background: #141a14; }
+  .carrusel-slide { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity 1.2s ease; }
+  .carrusel-slide.activa { opacity: 1; }
+  .carrusel-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center 38%; filter: grayscale(1) contrast(1.05); transform: scale(1.06); transition: transform 7s ease-out; }
+  .carrusel-slide.activa img { transform: scale(1); }
+  .para-ti-caja { position: absolute; left: 0; bottom: 0; z-index: 2; padding: 40px; max-width: 340px; display: flex; flex-direction: column; gap: 18px; background: rgba(20, 26, 20, 0.62); backdrop-filter: blur(2px); }
+  .para-ti-caja p { margin: 0; font-size: 14px; line-height: 1.75; }
+  .para-ti-caja .enlace-linea { align-self: flex-start; }
+  .carrusel-controles { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 32px; }
+  .carrusel-btn {
+    width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(201, 164, 106, 0.6);
+    background: none; color: var(--crema); font-size: 16px; cursor: pointer; transition: background .3s, color .3s;
+  }
+  .carrusel-btn:hover { background: var(--dorado); color: var(--verde-oscuro); }
+  .carrusel-puntos { display: flex; gap: 4px; }
+  .carrusel-puntos button { width: 28px; height: 28px; padding: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .carrusel-puntos button::before { content: ''; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--dorado); transition: background .3s, transform .3s; }
+  .carrusel-puntos button[aria-current='true']::before { background: var(--dorado); transform: scale(1.25); }
+  @media (max-width: 1100px) { .para-ti-ornamento { opacity: 0.4; } }
+  @media (max-width: 760px) {
+    .para-ti-ornamento { display: none; }
+    .carrusel-pista { height: 380px; }
+    .carrusel-marco { inset: -8px; }
+    .para-ti-caja { position: static; max-width: none; background: #141a14; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .carrusel-slide, .carrusel-slide img { transition: none; }
+  }
+
+  /* Novias MERAV */
+  .novias-cabecera { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 52px; }
+  .novias-titulo { font-family: var(--serif); font-weight: 300; font-size: clamp(34px, 4vw, 52px); letter-spacing: 0.22em; text-transform: uppercase; line-height: 1; }
+  .novias-script {
+    display: block;
+    font-family: var(--script);
+    font-size: clamp(64px, 8vw, 104px);
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 0.9;
+    margin-bottom: -6px;
+    background: linear-gradient(100deg, #a98450, #d9bd85 45%, #b8915a 70%, #8f6d3c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .novias-cabecera p { margin: 6px 0 0; max-width: 460px; font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--gris); }
+  .novias-galeria { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+  .novias-galeria figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .novias-galeria .marco { overflow: hidden; }
+  .novias-galeria img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform .7s ease; }
+  .novias-galeria figure:hover img { transform: scale(1.04); }
+  .novias-galeria figcaption { font-family: var(--serif); font-style: italic; font-size: 17px; text-align: center; color: var(--dorado-texto); }
+  .novias-pie { margin-top: 48px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .novias-pie p { margin: 0; font-family: var(--serif); font-size: 20px; }
+  .dorado-texto { color: var(--dorado-texto); font-style: italic; }
+  @media (max-width: 960px) { .novias-galeria { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; } }
+
+  /* ===== Animación de entrada de la portada ===== */
+  @keyframes entrar-abajo { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+  @keyframes entrar-arriba { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+  @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes modelo {
+    from { opacity: 0; transform: translateY(46px) scale(0.97); }
+    to { opacity: 1; transform: none; }
+  }
+  /* "Hecho a mano" se escribe de izquierda a derecha */
+  @keyframes escribir {
+    from { clip-path: inset(-150% 105% -80% -15%); opacity: 0.3; }
+    to { clip-path: inset(-150% -15% -80% -15%); opacity: 1; }
+  }
+  @keyframes trazar { to { stroke-dashoffset: 0; } }
+  @keyframes titilar { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
+
+  :global(.cabecera) { animation: entrar-abajo 0.9s ease-out both; }
+  .script { display: inline-block; padding: 0 0.12em; animation: escribir 2.2s cubic-bezier(0.55, 0.1, 0.3, 1) 0.5s backwards; }
+  .hero-foto img { animation: modelo 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both; }
+  .halo, .arco-linea { animation: aparecer 2s ease 0.6s both; }
+  .orbita { animation: aparecer 2.5s ease 1s both; }
+  .trazo { stroke-dasharray: 1; stroke-dashoffset: 1; animation: trazar 2.8s ease-in-out 0.4s forwards; }
+  .destellos path { transform-box: fill-box; transform-origin: center; animation: titilar 3.2s ease-in-out infinite; }
+  .destellos path:nth-child(2) { animation-delay: 0.8s; }
+  .destellos path:nth-child(3) { animation-delay: 1.6s; }
+  .destellos path:nth-child(4) { animation-delay: 2.2s; }
+  .destellos path:nth-child(5) { animation-delay: 1.2s; }
+  .hero-texto { animation: entrar-arriba 1s ease-out 1.2s both; }
+  .hero-mini a:nth-of-type(1) { animation: entrar-arriba 0.9s ease-out 1.4s both; }
+  .hero-mini a:nth-of-type(2) { animation: entrar-arriba 0.9s ease-out 1.6s both; }
+  .mini-linea { animation: aparecer 1s ease 1.8s both; }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.cabecera), .script, .hero-foto img, .halo, .arco-linea, .orbita,
+    .hero-texto, .hero-mini a, .mini-linea, .destellos path { animation: none; }
+    .trazo { animation: none; stroke-dashoffset: 0; }
+  }
+</style>
