@@ -21,7 +21,10 @@ const ogImage = new URL(image, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href={R('/img/logo-perfil.jpg')} />
+    <link rel="icon" href={R('/favicon.ico')} sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href={R('/favicon-32.png')} />
+    <link rel="apple-touch-icon" href={R('/apple-touch-icon.png')} />
+    <meta name="theme-color" content="#2B3A2C" />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_CO" />
