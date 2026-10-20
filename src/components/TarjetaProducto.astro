@@ -1,0 +1,18 @@
+---
+import { R } from '../utils/ruta';
+import { formatoPrecio, type Producto } from '../data/tienda';
+
+interface Props {
+  producto: Producto;
+  grupos?: string; // pestañas del inicio en las que aparece (Más vendidos, Novedades…)
+}
+const { producto: p, grupos } = Astro.props;
+---
+<a class="tarjeta" href={R(`/productos/${p.slug}`)} data-grupos={grupos}>
+  <div class="marco"><img src={p.imagenes[0].src} alt={p.imagenes[0].alt} width="480" height="600" loading="lazy" /></div>
+  <span class="info">
+    <span class="nombre">{p.nombre}</span>
+    <span class="precio-tarjeta">{formatoPrecio(p.precio)}</span>
+    <span class="accion">Ver pieza →</span>
+  </span>
+</a>

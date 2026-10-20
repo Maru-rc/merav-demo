@@ -36,6 +36,53 @@ export interface Producto {
 
 export const formatoPrecio = (valor: number) => `$${new Intl.NumberFormat('es-CO').format(valor)}`;
 
+// Información de cada categoría: se usa para su página propia (/tiaras, /diademas…) y para el SEO
+export interface InfoCategoria {
+  nombre: Categoria;
+  slug: string;
+  etiqueta: string; // cómo se nombra un producto de esta categoría en el título de su página
+  titulo: string; // título de la página de la categoría (≤ 60 caracteres con " | MERAV")
+  descripcion: string; // descripción para Google (≤ 160 caracteres)
+  intro: string; // texto visible al inicio de la página
+}
+
+export const CATEGORIAS: InfoCategoria[] = [
+  {
+    nombre: 'Tiaras',
+    slug: 'tiaras',
+    etiqueta: 'Tiara para novia',
+    titulo: 'Tiaras para novia hechas a mano',
+    descripcion: 'Tiaras para novia y quinceañera hechas a mano en Colombia con cristales, perlas y flores. Personaliza el color y pídela por WhatsApp.',
+    intro: 'Tiaras para novias y quinceañeras, elaboradas a mano en Colombia con cristales tallados, perlas y flores metálicas. Cada tiara se arma pieza por pieza y puede hacerse en dorado, plata, champán u oro rosa para que combine con tu vestido y tu peinado.',
+  },
+  {
+    nombre: 'Diademas',
+    slug: 'diademas',
+    etiqueta: 'Diadema para novia',
+    titulo: 'Diademas para novia hechas a mano',
+    descripcion: 'Diademas de perlas y cristales hechas a mano en Colombia, para novias, invitadas y quinceañeras. Personaliza el color y pídela por WhatsApp.',
+    intro: 'Diademas de perlas y cristales hechas a mano, cómodas para llevar durante todo el día. Ideales para novias, invitadas y sesiones de fotos; las personalizamos en el tono que prefieras.',
+  },
+  {
+    nombre: 'Tocados',
+    slug: 'tocados',
+    etiqueta: 'Tocado para novia',
+    titulo: 'Tocados para novia hechos a mano',
+    descripcion: 'Tocados nupciales de flores, perlas y cristales hechos a mano en Colombia, para recogidos y semirecogidos. Pide el tuyo por WhatsApp.',
+    intro: 'Tocados nupciales de ramas, flores, perlas y cristales, pensados para recogidos, trenzas y semirecogidos. Son flexibles, livianos y se adaptan a la forma de tu peinado.',
+  },
+  {
+    nombre: 'Accesorios',
+    slug: 'accesorios',
+    etiqueta: 'Accesorios para novia',
+    titulo: 'Aretes y accesorios para novia hechos a mano',
+    descripcion: 'Aretes, gargantillas y sets hechos a mano en Colombia para novias y quinceañeras, a juego con tu tiara o tocado. Pídelos por WhatsApp.',
+    intro: 'Aretes, gargantillas y sets hechos a mano para completar tu look de novia o quinceañera, a juego con tu tiara, diadema o tocado MERAV.',
+  },
+];
+
+export const infoCategoria = (nombre: Categoria) => CATEGORIAS.find((c) => c.nombre === nombre)!;
+
 // Para qué peinado u ocasión va mejor cada tipo de pieza
 export const IDEAL_PARA: Record<Categoria, string> = {
   Tiaras: 'Ideal para novias y quinceañeras que sueñan con un look de princesa; luce perfecta con recogidos altos o semirecogidos.',

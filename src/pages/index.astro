@@ -2,7 +2,8 @@
 import Base from '../layouts/Base.astro';
 import { R } from '../utils/ruta';
 import Header from '../components/Header.astro';
-import { PRODUCTOS, COLECCIONES, INSTAGRAM, formatoPrecio, waLink } from '../data/tienda';
+import TarjetaProducto from '../components/TarjetaProducto.astro';
+import { PRODUCTOS, COLECCIONES, CATEGORIAS, INSTAGRAM, WHATSAPP, infoCategoria, waLink } from '../data/tienda';
 
 const pestanas = [
   { id: 'best', label: 'Más vendidos' },
@@ -60,20 +61,49 @@ const novias = [
   { src: R('/img/novia-tiara.jpg'), w: 1059, h: 1323, alt: 'Novia MERAV con tiara de cristales', texto: 'Brillo propio' },
 ];
 
+const inicio = new URL(R('/'), Astro.site).toString();
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Store',
-  name: 'MERAV — Tocados y Diademas',
-  description: 'Tiaras, diademas y tocados para novia hechos a mano en Colombia. Personaliza el color. Envíos a todo el mundo.',
-  url: Astro.site?.toString(),
-  image: new URL(R('/img/novia-tiara.jpg'), Astro.site).toString(),
-  telephone: '+57 333 039 9107',
-  address: { '@type': 'PostalAddress', addressCountry: 'CO' },
-  sameAs: [INSTAGRAM],
+  '@graph': [
+    {
+      '@type': 'Store',
+      '@id': `${inicio}#tienda`,
+      name: 'MERAV — Tocados y Diademas',
+      description: 'Tiaras, diademas y tocados para novia hechos a mano en Colombia. Personaliza el color. Envíos a todo el mundo.',
+      url: inicio,
+      logo: new URL(R('/apple-touch-icon.png'), Astro.site).toString(),
+      image: new URL(R('/img/diadema-zafiro.jpg'), Astro.site).toString(),
+      telephone: `+${WHATSAPP}`,
+      priceRange: '$$',
+      currenciesAccepted: 'COP',
+      address: { '@type': 'PostalAddress', addressCountry: 'CO' },
+      areaServed: 'Worldwide',
+      sameAs: [INSTAGRAM],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${inicio}#web`,
+      name: 'MERAV',
+      url: inicio,
+      inLanguage: 'es-CO',
+      publisher: { '@id': `${inicio}#tienda` },
+    },
+    {
+      // Las categorías como lista, para que Google entienda la estructura de la tienda
+      '@type': 'ItemList',
+      name: 'Colecciones MERAV',
+      itemListElement: CATEGORIAS.map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: c.nombre,
+        url: new URL(R(`/${c.slug}`), Astro.site).toString(),
+      })),
+    },
+  ],
 };
 ---
 <Base
-  title="MERAV | Tiaras, diademas y tocados para novia hechos a mano en Colombia"
+  title="MERAV | Tiaras y tocados para novia hechos a mano"
   description="Tiaras, diademas y tocados nupciales hechos a mano en Colombia. Personaliza el color de tu pieza y recíbela en cualquier parte del mundo."
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
@@ -176,14 +206,7 @@ const jsonLd = {
     </div>
     <div class="rejilla-4" id="productos">
       {PRODUCTOS.map((p) => (
-        <a class="tarjeta" href={R(`/productos/${p.slug}`)} data-grupos={grupos(p)}>
-          <div class="marco"><img src={p.imagenes[0].src} alt={p.imagenes[0].alt} width="480" height="600" loading="lazy" /></div>
-          <span class="info">
-            <span class="nombre">{p.nombre}</span>
-            <span class="precio-tarjeta">{formatoPrecio(p.precio)}</span>
-            <span class="accion">Ver pieza →</span>
-          </span>
-        </a>
+        <TarjetaProducto producto={p} grupos={grupos(p)} />
       ))}
     </div>
   </section>
@@ -204,7 +227,7 @@ const jsonLd = {
     <h2 class="titulo-seccion" style="margin-bottom: 48px">Colecciones</h2>
     <div class="rejilla-4">
       {COLECCIONES.map((c) => (
-        <a class="coleccion" href="#tienda">
+        <a class="coleccion" href={R(`/${infoCategoria(c.nombre).slug}`)}>
           <div class="marco"><img src={c.img} alt={`Colección ${c.nombre}`} width="480" height="600" loading="lazy" /></div>
           <span>{c.nombre} <span aria-hidden="true">→</span></span>
         </a>

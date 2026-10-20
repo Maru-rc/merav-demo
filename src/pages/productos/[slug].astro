@@ -3,32 +3,67 @@ import Base from '../../layouts/Base.astro';
 import { R } from '../../utils/ruta';
 import Header from '../../components/Header.astro';
 import IconoWhatsApp from '../../components/IconoWhatsApp.astro';
-import { PRODUCTOS, COLORES, IDEAL_PARA, TIEMPO_ELABORACION, ENVIOS, formatoPrecio, waLink } from '../../data/tienda';
+import TarjetaProducto from '../../components/TarjetaProducto.astro';
+import { PRODUCTOS, COLORES, IDEAL_PARA, TIEMPO_ELABORACION, ENVIOS, formatoPrecio, infoCategoria, waLink } from '../../data/tienda';
 
 export function getStaticPaths() {
   return PRODUCTOS.map((p) => ({ params: { slug: p.slug }, props: { producto: p } }));
 }
 
 const { producto } = Astro.props;
-const relacionados = PRODUCTOS.filter((p) => p.slug !== producto.slug).slice(0, 4);
+const categoria = infoCategoria(producto.categoria);
+// "Combínala con": primero piezas de otras categorías (para armar el look), luego de la misma
+const otros = PRODUCTOS.filter((p) => p.slug !== producto.slug);
+const relacionados = [...otros.filter((p) => p.categoria !== producto.categoria), ...otros.filter((p) => p.categoria === producto.categoria)].slice(0, 4);
 // Por defecto no hay color elegido: la pieza se pide tal como aparece en la foto
 const msjOriginal = `Hola MERAV, me interesa la pieza "${producto.nombre}" tal como aparece en la web.`;
 const msjColor = `Hola MERAV, me interesa la pieza "${producto.nombre}" en color `;
 
+// Título y descripción para Google (≤ 60 y ≤ 160 caracteres)
+const titulo = `${producto.nombre} | ${categoria.etiqueta} | MERAV`;
+const cola = ' Artesanía colombiana: pide por WhatsApp, envíos a todo el mundo.';
+const descripcion = (producto.descripcion + cola).length <= 160
+  ? producto.descripcion + cola
+  : producto.descripcion.slice(0, 157 - cola.length).trimEnd() + '…' + cola;
+
+const url = new URL(R(`/productos/${producto.slug}`), Astro.site).toString();
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: producto.nombre,
-  description: producto.descripcion,
-  category: producto.categoria,
-  image: producto.imagenes.map((i) => new URL(i.src, Astro.site).toString()),
-  brand: { '@type': 'Brand', name: 'MERAV' },
-  // TODO: añadir "offers" con precio y moneda cuando estén los precios reales
+  '@graph': [
+    {
+      '@type': 'Product',
+      name: producto.nombre,
+      description: `${producto.descripcion} ${producto.materiales}`,
+      category: producto.categoria,
+      image: producto.imagenes.map((i) => new URL(i.src, Astro.site).toString()),
+      brand: { '@type': 'Brand', name: 'MERAV' },
+      material: producto.materiales,
+      url,
+      // TODO: los precios actuales son de ejemplo; poner los reales antes de publicar
+      offers: {
+        '@type': 'Offer',
+        url,
+        price: producto.precio,
+        priceCurrency: 'COP',
+        availability: 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
+        seller: { '@type': 'Organization', name: 'MERAV' },
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: new URL(R('/'), Astro.site).toString() },
+        { '@type': 'ListItem', position: 2, name: categoria.nombre, item: new URL(R(`/${categoria.slug}`), Astro.site).toString() },
+        { '@type': 'ListItem', position: 3, name: producto.nombre, item: url },
+      ],
+    },
+  ],
 };
 ---
 <Base
-  title={`${producto.nombre} | ${producto.categoria} hechas a mano | MERAV`}
-  description={`${producto.descripcion} Hecha a mano: pídela tal cual o en el color que prefieras por WhatsApp. Envíos a todo el mundo.`}
+  title={titulo}
+  description={descripcion}
   image={producto.imagenes[0].src}
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
@@ -36,7 +71,7 @@ const jsonLd = {
 
   <main class="contenedor ficha">
     <nav class="ruta" aria-label="Ruta">
-      <a href={R('/')}>Inicio</a> / <a href={R('/#colecciones')}>{producto.categoria}</a> / <span>{producto.nombre}</span>
+      <a href={R('/')}>Inicio</a> / <a href={R(`/${categoria.slug}`)}>{producto.categoria}</a> / <span>{producto.nombre}</span>
     </nav>
 
     <div class="ficha-cuerpo">
@@ -106,10 +141,7 @@ const jsonLd = {
       <h2 id="combina" class="titulo-seccion">Combínala con</h2>
       <div class="rejilla-4">
         {relacionados.map((r) => (
-          <a class="tarjeta" href={R(`/productos/${r.slug}`)}>
-            <div class="marco"><img src={r.imagenes[0].src} alt={r.imagenes[0].alt} width="480" height="600" loading="lazy" /></div>
-            <span class="info"><span class="nombre">{r.nombre}</span><span class="precio-tarjeta">{formatoPrecio(r.precio)}</span><span class="accion">Ver pieza →</span></span>
-          </a>
+          <TarjetaProducto producto={r} />
         ))}
       </div>
     </section>

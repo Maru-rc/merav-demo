@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import { R } from '../utils/ruta';
+import { CATEGORIAS } from '../data/tienda';
+---
+<Base title="Página no encontrada | MERAV" description="La página que buscas no existe o cambió de dirección. Conoce las tiaras, diademas y tocados hechos a mano de MERAV.">
+  <meta name="robots" content="noindex" slot="head" />
+  <Header solido />
+  <main class="contenedor no-encontrada">
+    <span class="script" aria-hidden="true">Oh, no…</span>
+    <h1>No encontramos esta página</h1>
+    <p>Puede que el enlace haya cambiado o que la pieza ya no esté disponible. Te invitamos a ver nuestras colecciones:</p>
+    <nav class="opciones" aria-label="Colecciones">
+      {CATEGORIAS.map((c) => <a class="enlace-linea" href={R(`/${c.slug}`)}>{c.nombre}</a>)}
+    </nav>
+    <a class="boton" href={R('/')}>Volver al inicio</a>
+  </main>
+</Base>
+
+<style>
+  .no-encontrada { min-height: 60vh; padding-top: 96px; padding-bottom: 112px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+  .script {
+    font-family: var(--script); font-size: 72px; line-height: 1;
+    background: linear-gradient(100deg, #a98450, #d9bd85 45%, #8f6d3c);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  h1 { font-size: clamp(30px, 4vw, 44px); }
+  p { margin: 0; max-width: 520px; font-size: 17px; color: #3d3b39; }
+  .opciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 28px; margin: 6px 0 14px; }
+</style>

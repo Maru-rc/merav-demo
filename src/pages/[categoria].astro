@@ -1,0 +1,106 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import TarjetaProducto from '../components/TarjetaProducto.astro';
+import { R } from '../utils/ruta';
+import { CATEGORIAS, COLECCIONES, PRODUCTOS, type InfoCategoria } from '../data/tienda';
+
+// Una página por categoría: /tiaras, /diademas, /tocados, /accesorios
+export function getStaticPaths() {
+  return CATEGORIAS.map((c) => ({ params: { categoria: c.slug }, props: { categoria: c } }));
+}
+
+const { categoria } = Astro.props as { categoria: InfoCategoria };
+const productos = PRODUCTOS.filter((p) => p.categoria === categoria.nombre);
+const otras = CATEGORIAS.filter((c) => c.slug !== categoria.slug);
+const imagenDe = (nombre: string) => COLECCIONES.find((c) => c.nombre === nombre)?.img;
+
+const url = new URL(R(`/${categoria.slug}`), Astro.site).toString();
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      name: categoria.titulo,
+      description: categoria.descripcion,
+      url,
+      inLanguage: 'es-CO',
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: productos.map((p, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: p.nombre,
+          url: new URL(R(`/productos/${p.slug}`), Astro.site).toString(),
+        })),
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: new URL(R('/'), Astro.site).toString() },
+        { '@type': 'ListItem', position: 2, name: categoria.nombre, item: url },
+      ],
+    },
+  ],
+};
+---
+<Base title={`${categoria.titulo} | MERAV`} description={categoria.descripcion} image={imagenDe(categoria.nombre)}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+  <Header solido />
+
+  <main class="contenedor categoria">
+    <nav class="ruta" aria-label="Ruta">
+      <a href={R('/')}>Inicio</a> / <span>{categoria.nombre}</span>
+    </nav>
+
+    <header class="cabecera-cat">
+      <span class="eyebrow">Colección</span>
+      <h1>{categoria.titulo}</h1>
+      <p>{categoria.intro}</p>
+    </header>
+
+    <div class="rejilla-4">
+      {productos.map((p) => <TarjetaProducto producto={p} />)}
+    </div>
+
+    <section class="otras" aria-labelledby="otras-titulo">
+      <h2 id="otras-titulo" class="titulo-seccion">Otras colecciones</h2>
+      <div class="otras-lista">
+        {otras.map((c) => (
+          <a class="otra" href={R(`/${c.slug}`)}>
+            <img src={imagenDe(c.nombre)} alt="" width="120" height="150" loading="lazy" />
+            <span>{c.nombre} <span aria-hidden="true">→</span></span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .categoria { padding-top: 28px; padding-bottom: 112px; }
+  .ruta { font-size: 14px; letter-spacing: 0.04em; color: #4a4846; margin-bottom: 36px; }
+  .ruta a { color: #4a4846; }
+  .ruta span { color: var(--tinta); }
+
+  .cabecera-cat { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 52px; }
+  .cabecera-cat h1 { font-size: clamp(34px, 4.4vw, 52px); max-width: 760px; }
+  .cabecera-cat p { margin: 0; max-width: 680px; font-size: 17px; line-height: 1.75; color: #3d3b39; }
+
+  .otras { margin-top: 104px; }
+  .otras h2 { margin-bottom: 32px; }
+  .otras-lista { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+  .otra {
+    display: flex; align-items: center; gap: 16px;
+    padding: 10px 26px 10px 10px;
+    background: var(--hueso); border: 1px solid var(--linea);
+    text-decoration: none; transition: border-color .3s;
+  }
+  .otra:hover { border-color: var(--dorado); }
+  .otra img { width: 64px; height: 80px; object-fit: cover; }
+  .otra > span { font-family: var(--serif); font-size: 18px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dorado-texto); }
+  @media (max-width: 600px) {
+    .otras-lista { flex-direction: column; align-items: stretch; }
+  }
+</style>
