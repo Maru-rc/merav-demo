@@ -5,18 +5,20 @@ import Header from '../components/Header.astro';
 import TarjetaProducto from '../components/TarjetaProducto.astro';
 import { PRODUCTOS, COLECCIONES, CATEGORIAS, INSTAGRAM, WHATSAPP, infoCategoria, waLink } from '../data/tienda';
 
+// Pestañas de "Encuentra tu pieza perfecta": cada una muestra 4 piezas y un botón para ver el resto
+const POR_PESTANA = 4;
 const pestanas = [
-  { id: 'best', label: 'Más vendidos' },
-  { id: 'nuevo', label: 'Novedades' },
-  { id: 'tiaras', label: 'Tiaras' },
-  { id: 'tocados', label: 'Tocados' },
-  { id: 'accesorios', label: 'Accesorios' },
+  { id: 'best', label: 'Más vendidos', verMas: 'Ver todo el catálogo', url: R('/catalogo') },
+  { id: 'nuevo', label: 'Novedades', verMas: 'Ver todo el catálogo', url: R('/catalogo') },
+  ...CATEGORIAS.map((c) => ({ id: c.slug, label: c.nombre, verMas: `Ver todas las ${c.nombre.toLowerCase()}`, url: R(`/${c.slug}`) })),
 ];
+// "Ver todos los tocados / accesorios" (masculino)
+pestanas.forEach((t) => { if (t.id === 'tocados' || t.id === 'accesorios') t.verMas = t.verMas.replace('todas las', 'todos los'); });
 
 const grupos = (p: (typeof PRODUCTOS)[number]) =>
-  [p.masVendido && 'best', p.nuevo && 'nuevo', p.categoria === 'Tiaras' && 'tiaras', p.categoria === 'Tocados' && 'tocados', p.categoria === 'Accesorios' && 'accesorios']
-    .filter(Boolean)
-    .join(' ');
+  [p.masVendido && 'best', p.nuevo && 'nuevo', infoCategoria(p.categoria).slug].filter(Boolean).join(' ');
+// Al cargar la página se ven solo las primeras 4 "Más vendidos" (sin esperar al JavaScript)
+const visiblesAlInicio = new Set(PRODUCTOS.filter((p) => p.masVendido).slice(0, POR_PESTANA).map((p) => p.slug));
 
 // Íconos de línea (trazos SVG en un cuadro de 24×24)
 const valores = [
@@ -201,13 +203,19 @@ const jsonLd = {
     <h2 class="titulo-seccion">Encuentra tu pieza perfecta</h2>
     <div class="pestanas" role="tablist" aria-label="Filtrar piezas">
       {pestanas.map((t, i) => (
-        <button type="button" role="tab" data-tab={t.id} aria-selected={i === 0 ? 'true' : 'false'}>{t.label}</button>
+        <button type="button" role="tab" data-tab={t.id} data-ver-mas={t.verMas} data-url={t.url} aria-selected={i === 0 ? 'true' : 'false'}>{t.label}</button>
       ))}
     </div>
-    <div class="rejilla-4" id="productos">
+    <div class="rejilla-4" id="productos" data-por-pestana={POR_PESTANA}>
       {PRODUCTOS.map((p) => (
-        <TarjetaProducto producto={p} grupos={grupos(p)} />
+        <TarjetaProducto producto={p} grupos={grupos(p)} oculta={!visiblesAlInicio.has(p.slug)} />
       ))}
+    </div>
+    <div class="ver-mas">
+      <a id="ver-mas" class="boton-ver-mas" href={pestanas[0].url}>
+        <span id="ver-mas-texto">{pestanas[0].verMas}</span>
+        <span aria-hidden="true">→</span>
+      </a>
     </div>
   </section>
 
@@ -355,17 +363,22 @@ const jsonLd = {
 <script>
   const botones = document.querySelectorAll<HTMLButtonElement>('.pestanas [role="tab"]');
   const tarjetas = document.querySelectorAll<HTMLElement>('#productos .tarjeta');
-  const mostrar = (id: string) => {
+  const porPestana = Number(document.getElementById('productos')?.dataset.porPestana ?? 4);
+  const verMas = document.getElementById('ver-mas') as HTMLAnchorElement | null;
+  const verMasTexto = document.getElementById('ver-mas-texto');
+  const mostrar = (b: HTMLButtonElement) => {
+    const id = b.dataset.tab!;
     let n = 0;
     tarjetas.forEach((t) => {
-      const ok = (t.dataset.grupos ?? '').split(' ').includes(id) && n < 4;
+      const ok = (t.dataset.grupos ?? '').split(' ').includes(id) && n < porPestana;
       t.hidden = !ok;
       if (ok) n++;
     });
-    botones.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+    botones.forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+    if (verMas) verMas.href = b.dataset.url!;
+    if (verMasTexto) verMasTexto.textContent = b.dataset.verMas!;
   };
-  botones.forEach((b) => b.addEventListener('click', () => mostrar(b.dataset.tab!)));
-  mostrar('best');
+  botones.forEach((b) => b.addEventListener('click', () => mostrar(b)));
 
   // Carrusel "Hecho para ti": cambia sola cada 5 s, se pausa al pasar el mouse
   const carrusel = document.querySelector<HTMLElement>('.carrusel');
@@ -515,7 +528,16 @@ const jsonLd = {
     font-family: inherit; font-size: 15px; letter-spacing: 0.06em; color: #4a4846; cursor: pointer;
   }
   .pestanas button[aria-selected='true'] { color: var(--tinta); font-weight: 500; border-bottom-color: var(--tinta); }
-  .tarjeta[hidden] { display: none; }
+  .ver-mas { display: flex; justify-content: center; margin-top: 44px; }
+  .boton-ver-mas {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 16px 34px;
+    border: 1px solid var(--dorado);
+    color: var(--tinta); text-decoration: none;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+    transition: background .3s, color .3s;
+  }
+  .boton-ver-mas:hover { background: var(--verde); border-color: var(--verde); color: var(--crema); }
 
   /* Historia */
   .historia { display: grid; grid-template-columns: 5fr 6fr; align-items: center; max-width: 1320px; margin: 0 auto; }

@@ -115,3 +115,5 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; line-height
   .tarjeta .precio-tarjeta { font-size: 15px; }
   .tarjeta .accion { font-size: 11px; letter-spacing: 0.1em; }
 }
+/* Tarjetas ocultas por las pestañas del inicio (debe ser global: la tarjeta es un componente aparte) */
+.tarjeta[hidden] { display: none; }
