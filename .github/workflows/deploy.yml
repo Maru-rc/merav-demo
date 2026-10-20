@@ -17,6 +17,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # La demo de GitHub Pages vive en la subcarpeta /merav-demo
+      SITE_URL: https://maru-rc.github.io
+      BASE_PATH: /merav-demo
     steps:
       - uses: actions/checkout@v4
       - uses: withastro/action@v3
