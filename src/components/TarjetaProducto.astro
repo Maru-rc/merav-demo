@@ -10,7 +10,7 @@ interface Props {
 const { producto: p, grupos, oculta = false } = Astro.props;
 ---
 <a class="tarjeta" href={R(`/productos/${p.slug}`)} data-grupos={grupos} hidden={oculta}>
-  <div class="marco"><img src={p.imagenes[0].src} alt={p.imagenes[0].alt} width="480" height="600" loading="lazy" /></div>
+  <div class="marco"><img src={p.imagenes[0].srcTarjeta ?? p.imagenes[0].src} alt={p.imagenes[0].alt} width="480" height="600" loading="lazy" /></div>
   <span class="info">
     <span class="nombre">{p.nombre}</span>
     <span class="precio-tarjeta">{formatoPrecio(p.precio)}</span>

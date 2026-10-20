@@ -4,16 +4,18 @@ import { R } from '../../utils/ruta';
 import Header from '../../components/Header.astro';
 import IconoWhatsApp from '../../components/IconoWhatsApp.astro';
 import TarjetaProducto from '../../components/TarjetaProducto.astro';
-import { PRODUCTOS, COLORES, IDEAL_PARA, TIEMPO_ELABORACION, ENVIOS, formatoPrecio, infoCategoria, waLink } from '../../data/tienda';
+import { obtenerProductos } from '../../lib/sanity';
+import { COLORES, IDEAL_PARA, TIEMPO_ELABORACION, ENVIOS, formatoPrecio, infoCategoria, waLink } from '../../data/tienda';
 
-export function getStaticPaths() {
-  return PRODUCTOS.map((p) => ({ params: { slug: p.slug }, props: { producto: p } }));
+export async function getStaticPaths() {
+  const productos = await obtenerProductos();
+  return productos.map((p) => ({ params: { slug: p.slug }, props: { producto: p } }));
 }
 
 const { producto } = Astro.props;
 const categoria = infoCategoria(producto.categoria);
 // "Combínala con": primero piezas de otras categorías (para armar el look), luego de la misma
-const otros = PRODUCTOS.filter((p) => p.slug !== producto.slug);
+const otros = (await obtenerProductos()).filter((p) => p.slug !== producto.slug);
 const relacionados = [...otros.filter((p) => p.categoria !== producto.categoria), ...otros.filter((p) => p.categoria === producto.categoria)].slice(0, 4);
 // Por defecto no hay color elegido: la pieza se pide tal como aparece en la foto
 const msjOriginal = `Hola MERAV, me interesa la pieza "${producto.nombre}" tal como aparece en la web.`;

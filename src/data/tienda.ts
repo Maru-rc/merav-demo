@@ -29,7 +29,7 @@ export interface Producto {
   precio: number; // en pesos colombianos
   materiales: string;
   medidas: string;
-  imagenes: { src: string; alt: string }[];
+  imagenes: { src: string; alt: string; srcTarjeta?: string }[]; // srcTarjeta: versión pequeña (viene de Sanity)
   masVendido?: boolean;
   nuevo?: boolean;
 }
@@ -100,7 +100,8 @@ export const ENVIOS = [
   'Tu pieza viaja protegida en su caja MERAV, lista para regalar o guardar.',
 ];
 
-// TODO: precios de ejemplo para mostrar la propuesta; reemplazar por los reales del catálogo
+// RESPALDO: los productos reales se editan en Sanity (ver src/lib/sanity.ts).
+// Esta lista solo se usa si Sanity no responde al compilar, y para la importación inicial.
 export const PRODUCTOS: Producto[] = [
   {
     slug: 'diadema-zafiro',

@@ -3,7 +3,10 @@ import Base from '../layouts/Base.astro';
 import { R } from '../utils/ruta';
 import Header from '../components/Header.astro';
 import TarjetaProducto from '../components/TarjetaProducto.astro';
-import { PRODUCTOS, COLECCIONES, CATEGORIAS, INSTAGRAM, WHATSAPP, infoCategoria, waLink } from '../data/tienda';
+import { COLECCIONES, CATEGORIAS, INSTAGRAM, WHATSAPP, infoCategoria, waLink, type Producto } from '../data/tienda';
+import { obtenerProductos } from '../lib/sanity';
+
+const PRODUCTOS = await obtenerProductos();
 
 // Pestañas de "Encuentra tu pieza perfecta": cada una muestra 4 piezas y un botón para ver el resto
 const POR_PESTANA = 4;
@@ -15,7 +18,7 @@ const pestanas = [
 // "Ver todos los tocados / accesorios" (masculino)
 pestanas.forEach((t) => { if (t.id === 'tocados' || t.id === 'accesorios') t.verMas = t.verMas.replace('todas las', 'todos los'); });
 
-const grupos = (p: (typeof PRODUCTOS)[number]) =>
+const grupos = (p: Producto) =>
   [p.masVendido && 'best', p.nuevo && 'nuevo', infoCategoria(p.categoria).slug].filter(Boolean).join(' ');
 // Al cargar la página se ven solo las primeras 4 "Más vendidos" (sin esperar al JavaScript)
 const visiblesAlInicio = new Set(PRODUCTOS.filter((p) => p.masVendido).slice(0, POR_PESTANA).map((p) => p.slug));

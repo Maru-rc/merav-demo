@@ -3,7 +3,10 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import TarjetaProducto from '../components/TarjetaProducto.astro';
 import { R } from '../utils/ruta';
-import { CATEGORIAS, PRODUCTOS } from '../data/tienda';
+import { CATEGORIAS } from '../data/tienda';
+import { obtenerProductos } from '../lib/sanity';
+
+const PRODUCTOS = await obtenerProductos();
 
 // Catálogo completo: todas las piezas, agrupadas por categoría
 const grupos = CATEGORIAS.map((c) => ({ ...c, productos: PRODUCTOS.filter((p) => p.categoria === c.nombre) }))
