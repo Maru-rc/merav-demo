@@ -1,0 +1,12 @@
+// Configuración para publicar en Cloudflare Workers (sitio 100 % estático)
+// Cloudflare ejecuta `npm run build` y luego `npx wrangler deploy`, que sube la carpeta dist/.
+{
+  // Debe coincidir con el "Project name" en Cloudflare → la web queda en merav.<tu-subdominio>.workers.dev
+  "name": "merav",
+  "compatibility_date": "2026-10-19",
+  "assets": {
+    "directory": "./dist",
+    // Si alguien entra a una dirección que no existe, se muestra nuestra página 404
+    "not_found_handling": "404-page"
+  }
+}
